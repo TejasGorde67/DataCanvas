@@ -1,6 +1,6 @@
 export interface Cell {
   id: string;
-  type: 'code' | 'markdown';
+  type: "code" | "markdown";
   content: string;
   output?: string;
 }
