@@ -6,15 +6,56 @@ export default {
     extend: {
       colors: {
         canvas: {
-          50: "#18181b",
-          100: "#27272a",
-          900: "#09090b",
+          50: "#1a1a1a",
+          100: "#121212",
+          900: "#0a0a0a",
         },
       },
       boxShadow: {
-        cell: "0 2px 8px -2px rgba(0, 0, 0, 0.25)",
+        cell: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme("colors.gray.300"),
+            a: {
+              color: theme("colors.blue.400"),
+              "&:hover": {
+                color: theme("colors.blue.300"),
+              },
+            },
+            h1: {
+              color: theme("colors.white"),
+            },
+            h2: {
+              color: theme("colors.white"),
+            },
+            h3: {
+              color: theme("colors.white"),
+            },
+            h4: {
+              color: theme("colors.white"),
+            },
+            strong: {
+              color: theme("colors.white"),
+            },
+            code: {
+              color: theme("colors.gray.300"),
+              backgroundColor: theme("colors.gray.800"),
+              padding: "0.25rem",
+              borderRadius: "0.25rem",
+            },
+            blockquote: {
+              color: theme("colors.gray.400"),
+              borderLeftColor: theme("colors.gray.700"),
+            },
+            hr: {
+              borderColor: theme("colors.gray.700"),
+            },
+          },
+        },
+      }),
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };

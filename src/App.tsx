@@ -1,48 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { CodeCell } from "./components/CodeCell";
-import { PlusCircle, Users, Search, Moon, Zap } from "lucide-react";
-import type { Cell, Notebook } from "./types";
-import logo from "./assets/logo.png";
+import { MarkdownCell } from "./components/MarkdownCell";
+import { AddCellButton } from "./components/AddCellButton";
+import { NotebookHeader } from "./components/NotebookHeader";
+import { UserPresence } from "./components/UserPresence";
+import { ThemeSwitcher } from "./components/ThemeSwitcher";
+import { NotebookProvider, useNotebook } from "./contexts/NotebookContext";
+import {
+  initAuth,
+  getAuthState,
+  subscribeToAuth,
+} from "./services/authService";
+import { LoginForm } from "./components/auth/LoginForm";
+import { Book, Users, Search, Settings, Moon, Zap } from "lucide-react";
+import type { Cell } from "./types";
 
-function App() {
-  const [notebook, setNotebook] = useState<Notebook>({
-    id: "1",
-    title: "Untitled Notebook",
-    cells: [],
-    lastModified: new Date(),
-  });
+function NotebookApp() {
+  const {
+    notebook,
+    addCell,
+    updateCell,
+    deleteCell,
+    executeCell,
+    saveNotebook,
+    updateNotebookTitle,
+  } = useNotebook();
 
-  const addCell = () => {
-    const newCell: Cell = {
-      id: Math.random().toString(36).substr(2, 9),
-      type: "code",
-      content: "",
-    };
-    setNotebook((prev) => ({
-      ...prev,
-      cells: [...prev.cells, newCell],
-    }));
+  const [activeUsers, setActiveUsers] = useState([
+    { id: "1", name: "You", color: "#2563eb", activeCell: null },
+  ]);
+
+  const handleAddCodeCell = () => {
+    addCell("code");
   };
 
-  const updateCell = (id: string, content: string) => {
-    setNotebook((prev) => ({
-      ...prev,
-      cells: prev.cells.map((cell) =>
-        cell.id === id ? { ...cell, content } : cell
-      ),
-    }));
-  };
-
-  const deleteCell = (id: string) => {
-    setNotebook((prev) => ({
-      ...prev,
-      cells: prev.cells.filter((cell) => cell.id !== id),
-    }));
-  };
-
-  const executeCell = async (id: string) => {
-    console.log(`Executing cell ${id}`);
+  const handleAddMarkdownCell = () => {
+    addCell("markdown");
   };
 
   return (
@@ -52,7 +46,7 @@ function App() {
           <div className="flex h-16 items-center justify-between px-4">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <img src={logo} alt="DataCanvas Logo" className="h-10 w-auto" />
+                <Book className="h-8 w-8 text-white" />
                 <span className="ml-2 text-xl font-bold gradient-text">
                   DataCanvas
                 </span>
@@ -102,68 +96,138 @@ function App() {
                 </div>
               </div>
 
-              <button className="p-2 text-gray-400 hover:text-gray-300 rounded-lg hover:bg-white/5">
-                <Moon className="h-5 w-5" />
-              </button>
-              <button className="p-2 text-gray-400 hover:text-gray-300 rounded-lg hover:bg-white/5">
-                <Users className="h-5 w-5" />
-              </button>
-              <button className="ml-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2">
-                <Zap className="h-4 w-4" />
-                Get Started
-              </button>
+              <div className="flex items-center ml-4 space-x-2">
+                <ThemeSwitcher />
+
+                <button className="p-2 text-gray-400 hover:text-gray-300 rounded-lg hover:bg-white/5">
+                  <Settings className="h-5 w-5" />
+                </button>
+
+                <div className="flex items-center ml-2">
+                  <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium">
+                    U
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-[1400px] mx-auto px-4 py-12">
-        <div className="text-center mb-16 relative">
-          <div className="radial-background absolute inset-0 -z-10"></div>
-          <h1 className="text-5xl font-bold mb-6 gradient-text">
-            Data Science Notebooks,
-            <br />
-            Reimagined for Teams.
-          </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-            Create professional data analysis in seconds using AI-powered
-            technology. Turn your data into insights that drive decisions,
-            reduce analysis time by 90%, and scale your data science efforts.
-          </p>
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={addCell}
-              className="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2"
-            >
-              <PlusCircle className="h-5 w-5" />
-              New Notebook
-            </button>
-          </div>
-          <div className="mt-6 text-sm text-gray-500">
-            Trusted by 300+ Data Teams Worldwide
-          </div>
-        </div>
+      <main className="max-w-[1000px] mx-auto px-4 py-8">
+        <NotebookHeader
+          title={notebook.title}
+          onTitleChange={updateNotebookTitle}
+          onSave={saveNotebook}
+          lastSaved={notebook.lastModified}
+        />
 
-        <div className="space-y-6">
-          <Virtuoso
-            style={{ height: "calc(100vh - 240px)" }}
-            totalCount={notebook.cells.length}
-            itemContent={(index) => {
-              const cell = notebook.cells[index];
-              return (
-                <CodeCell
-                  key={cell.id}
-                  content={cell.content}
-                  onChange={(content) => updateCell(cell.id, content)}
-                  onDelete={() => deleteCell(cell.id)}
-                  onExecute={() => executeCell(cell.id)}
-                />
-              );
-            }}
-          />
+        <div className="mt-8 space-y-6">
+          {notebook.cells.length === 0 ? (
+            <div className="text-center py-16 border border-dashed border-gray-800 rounded-xl">
+              <Zap className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-xl font-medium text-gray-300 mb-2">
+                This notebook is empty
+              </h3>
+              <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                Start by adding a code or markdown cell to begin your data
+                analysis journey
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={handleAddCodeCell}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                >
+                  Add Code Cell
+                </button>
+                <button
+                  onClick={handleAddMarkdownCell}
+                  className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 flex items-center gap-2"
+                >
+                  Add Markdown Cell
+                </button>
+              </div>
+            </div>
+          ) : (
+            <Virtuoso
+              totalCount={notebook.cells.length}
+              overscan={5}
+              itemContent={(index) => {
+                const cell = notebook.cells[index];
+
+                if (cell.type === "code") {
+                  return (
+                    <CodeCell
+                      key={cell.id}
+                      id={cell.id}
+                      content={cell.content}
+                      output={cell.output}
+                      onChange={(content) => updateCell(cell.id, content)}
+                      onDelete={() => deleteCell(cell.id)}
+                      onExecute={() => executeCell(cell.id)}
+                    />
+                  );
+                } else {
+                  return (
+                    <MarkdownCell
+                      key={cell.id}
+                      id={cell.id}
+                      content={cell.content}
+                      onChange={(content) => updateCell(cell.id, content)}
+                      onDelete={() => deleteCell(cell.id)}
+                    />
+                  );
+                }
+              }}
+              components={{
+                Footer: () => (
+                  <div className="py-6 flex justify-center">
+                    <AddCellButton
+                      onAddCodeCell={handleAddCodeCell}
+                      onAddMarkdownCell={handleAddMarkdownCell}
+                    />
+                  </div>
+                ),
+              }}
+            />
+          )}
         </div>
       </main>
+
+      <UserPresence users={activeUsers} />
     </div>
+  );
+}
+
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Initialize authentication
+    initAuth();
+
+    // Subscribe to auth state changes
+    const unsubscribe = subscribeToAuth((state) => {
+      setIsAuthenticated(state.isAuthenticated);
+    });
+
+    // Check current auth state
+    const authState = getAuthState();
+    setIsAuthenticated(authState.isAuthenticated);
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  if (!isAuthenticated) {
+    return <LoginForm onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
+
+  return (
+    <NotebookProvider>
+      <NotebookApp />
+    </NotebookProvider>
   );
 }
 
