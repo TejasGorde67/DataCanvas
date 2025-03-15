@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import { Virtuoso } from 'react-virtuoso';
-import { CodeCell } from './components/CodeCell';
-import { PlusCircle, Book, Users, Search, Settings, Moon, Zap } from 'lucide-react';
-import type { Cell, Notebook } from './types';
+import React, { useState } from "react";
+import { Virtuoso } from "react-virtuoso";
+import { CodeCell } from "./components/CodeCell";
+import {
+  PlusCircle,
+  Book,
+  Users,
+  Search,
+  Settings,
+  Moon,
+  Zap,
+} from "lucide-react";
+import type { Cell, Notebook } from "./types";
+import logo from "./assets/logo.png";
 
 function App() {
   const [notebook, setNotebook] = useState<Notebook>({
-    id: '1',
-    title: 'Untitled Notebook',
+    id: "1",
+    title: "Untitled Notebook",
     cells: [],
     lastModified: new Date(),
   });
@@ -15,28 +24,28 @@ function App() {
   const addCell = () => {
     const newCell: Cell = {
       id: Math.random().toString(36).substr(2, 9),
-      type: 'code',
-      content: '',
+      type: "code",
+      content: "",
     };
-    setNotebook(prev => ({
+    setNotebook((prev) => ({
       ...prev,
       cells: [...prev.cells, newCell],
     }));
   };
 
   const updateCell = (id: string, content: string) => {
-    setNotebook(prev => ({
+    setNotebook((prev) => ({
       ...prev,
-      cells: prev.cells.map(cell =>
+      cells: prev.cells.map((cell) =>
         cell.id === id ? { ...cell, content } : cell
       ),
     }));
   };
 
   const deleteCell = (id: string) => {
-    setNotebook(prev => ({
+    setNotebook((prev) => ({
       ...prev,
-      cells: prev.cells.filter(cell => cell.id !== id),
+      cells: prev.cells.filter((cell) => cell.id !== id),
     }));
   };
 
@@ -51,28 +60,42 @@ function App() {
           <div className="flex h-16 items-center justify-between px-4">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <Book className="h-8 w-8 text-white" />
+                <img src={logo} alt="DataCanvas Logo" className="h-10 w-auto" />
                 <span className="ml-2 text-xl font-bold gradient-text">
                   DataCanvas
                 </span>
               </div>
               <div className="hidden md:flex md:items-center md:space-x-1 ml-8">
-                <a href="#" className="px-3 py-2 text-sm font-medium text-white rounded-md bg-white/10">
+                <a
+                  href="#"
+                  className="px-3 py-2 text-sm font-medium text-white rounded-md bg-white/10"
+                >
                   Notebooks
                 </a>
-                <a href="#" className="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-white/5">
+                <a
+                  href="#"
+                  className="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-white/5"
+                >
                   Visualizations
                 </a>
-                <a href="#" className="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-white/5">
+                <a
+                  href="#"
+                  className="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-white/5"
+                >
                   Datasets
                 </a>
-                <a href="#" className="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-white/5">
+                <a
+                  href="#"
+                  className="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-white/5"
+                >
                   Changelog
                 </a>
-                <div className="px-2 py-1 text-xs font-medium bg-white/10 rounded ml-2">New</div>
+                <div className="px-2 py-1 text-xs font-medium bg-white/10 rounded ml-2">
+                  New
+                </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <div className="hidden md:block">
                 <div className="relative">
@@ -86,7 +109,7 @@ function App() {
                   />
                 </div>
               </div>
-              
+
               <button className="p-2 text-gray-400 hover:text-gray-300 rounded-lg hover:bg-white/5">
                 <Moon className="h-5 w-5" />
               </button>
@@ -106,13 +129,14 @@ function App() {
         <div className="text-center mb-16 relative">
           <div className="radial-background absolute inset-0 -z-10"></div>
           <h1 className="text-5xl font-bold mb-6 gradient-text">
-            Data Science Notebooks,<br />
+            Data Science Notebooks,
+            <br />
             Reimagined for Teams.
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-            Create professional data analysis in seconds using AI-powered technology.
-            Turn your data into insights that drive decisions, reduce analysis time by 90%,
-            and scale your data science efforts.
+            Create professional data analysis in seconds using AI-powered
+            technology. Turn your data into insights that drive decisions,
+            reduce analysis time by 90%, and scale your data science efforts.
           </p>
           <div className="flex justify-center gap-4">
             <button
@@ -130,9 +154,9 @@ function App() {
 
         <div className="space-y-6">
           <Virtuoso
-            style={{ height: 'calc(100vh - 240px)' }}
+            style={{ height: "calc(100vh - 240px)" }}
             totalCount={notebook.cells.length}
-            itemContent={index => {
+            itemContent={(index) => {
               const cell = notebook.cells[index];
               return (
                 <CodeCell
