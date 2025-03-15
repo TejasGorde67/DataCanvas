@@ -3,12 +3,14 @@ import { Trash2, Grip, Edit, Check } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 interface MarkdownCellProps {
+  id: string;
   content: string;
   onChange: (content: string) => void;
   onDelete: () => void;
 }
 
 export function MarkdownCell({
+  id,
   content,
   onChange,
   onDelete,
@@ -31,6 +33,8 @@ export function MarkdownCell({
       <div className="flex items-center justify-between py-2 px-4 bg-canvas-50 border-b border-gray-800">
         <div className="flex items-center space-x-2">
           <span className="text-sm font-medium text-gray-300">Markdown</span>
+          <span className="text-xs text-gray-600">|</span>
+          <span className="text-xs text-gray-600">Cell {id.slice(0, 4)}</span>
         </div>
         <div className="flex items-center gap-1">
           {isEditing ? (

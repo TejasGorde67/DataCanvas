@@ -1,5 +1,5 @@
-import { PlusCircle, Code, FileText } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { PlusCircle, Code, FileText } from "lucide-react";
 
 interface AddCellButtonProps {
   onAddCodeCell: () => void;
