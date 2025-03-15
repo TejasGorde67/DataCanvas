@@ -1,15 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { CodeCell } from "./components/CodeCell";
-import {
-  PlusCircle,
-  Book,
-  Users,
-  Search,
-  Settings,
-  Moon,
-  Zap,
-} from "lucide-react";
+import { PlusCircle, Users, Search, Moon, Zap } from "lucide-react";
 import type { Cell, Notebook } from "./types";
 import logo from "./assets/logo.png";
 
