@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
-import {
-  listNotebooks,
-  loadNotebook,
-  saveNotebook,
-} from "../services/notebookService";
+import { listNotebooks } from "../services/notebookService";
 import { Notebook } from "../types";
-import { Search, Plus, Folder, Clock, Download, Trash2 } from "lucide-react";
+import { Search, Plus, Folder, Clock, Trash2 } from "lucide-react";
 
 interface NotebookManagerProps {
   onSelectNotebook: (notebook: Notebook) => void;

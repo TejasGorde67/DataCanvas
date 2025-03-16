@@ -154,3 +154,80 @@ export const initAuth = (): void => {
     }
   }
 };
+
+// Add this function to your existing authService.ts file
+
+// Add this to your existing authService.ts file
+
+export const register = async (
+  username: string,
+  email: string,
+  password: string
+): Promise<User> => {
+  updateAuthState({ isLoading: true, error: null });
+
+  try {
+    // Validate inputs
+    if (!username || !email || !password) {
+      throw new Error("All fields are required");
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error("Invalid email format");
+    }
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Check if username already exists
+    const userExists = MOCK_USERS.some((u) => u.username === username);
+    if (userExists) {
+      throw new Error("Username already exists");
+    }
+
+    // Check if email already exists
+    const emailExists = MOCK_USERS.some((u) => u.email === email);
+    if (emailExists) {
+      throw new Error("Email already in use");
+    }
+
+    // Create new user
+    const newUser = {
+      id: (MOCK_USERS.length + 1).toString(),
+      username,
+      password,
+      email,
+      displayName: username,
+      avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        username
+      )}&background=random`,
+    };
+
+    // Add to mock users (in a real app, this would be saved to a database)
+    MOCK_USERS.push(newUser);
+
+    // Create user object without password
+    const { password: _, ...userWithoutPassword } = newUser;
+
+    // Update auth state
+    updateAuthState({
+      user: userWithoutPassword,
+      isAuthenticated: true,
+      isLoading: false,
+    });
+
+    // Store in localStorage
+    localStorage.setItem("auth_user", JSON.stringify(userWithoutPassword));
+
+    return userWithoutPassword;
+  } catch (error) {
+    updateAuthState({
+      isLoading: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "An error occurred during registration",
+    });
+    throw error;
+  }
+};

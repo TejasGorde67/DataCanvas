@@ -13,10 +13,9 @@ import {
   subscribeToAuth,
 } from "./services/authService";
 import { LoginForm } from "./components/auth/LoginForm";
-import { Book, Users, Search, Settings, Moon, Zap } from "lucide-react";
-import type { Cell } from "./types";
+import { Book, Search, Settings, Zap } from "lucide-react";
 
-function NotebookApp() {
+function NotebookApp({ activeUsers }: { activeUsers: any[] }) {
   const {
     notebook,
     addCell,
@@ -26,10 +25,6 @@ function NotebookApp() {
     saveNotebook,
     updateNotebookTitle,
   } = useNotebook();
-
-  const [activeUsers, setActiveUsers] = useState([
-    { id: "1", name: "You", color: "#2563eb", activeCell: null },
-  ]);
 
   const handleAddCodeCell = () => {
     addCell("code");
@@ -201,6 +196,11 @@ function NotebookApp() {
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([
+    { id: "1", name: "User1", color: "#2563eb" },
+    { id: "2", name: "User2", color: "#34d399" },
+    // Add more users as needed
+  ]);
 
   useEffect(() => {
     // Initialize authentication
@@ -226,7 +226,7 @@ function App() {
 
   return (
     <NotebookProvider>
-      <NotebookApp />
+      <NotebookApp activeUsers={activeUsers} />
     </NotebookProvider>
   );
 }

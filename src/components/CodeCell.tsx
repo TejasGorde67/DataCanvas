@@ -1,15 +1,22 @@
-import { useState } from 'react';
-import Editor from '@monaco-editor/react';
-import { Play, Trash2, Grip } from 'lucide-react';
+import { useState } from "react";
+import Editor from "@monaco-editor/react";
+import { Play, Trash2, Grip } from "lucide-react";
 
 interface CodeCellProps {
+  id: string;
   content: string;
+  output?: string;
   onChange: (content: string) => void;
   onDelete: () => void;
-  onExecute: () => void;
+  onExecute: () => Promise<void>;
 }
 
-export function CodeCell({ content, onChange, onDelete, onExecute }: CodeCellProps) {
+export function CodeCell({
+  content,
+  onChange,
+  onDelete,
+  onExecute,
+}: CodeCellProps) {
   const [isExecuting, setIsExecuting] = useState(false);
 
   const handleExecute = async () => {
@@ -51,18 +58,18 @@ export function CodeCell({ content, onChange, onDelete, onExecute }: CodeCellPro
         height="200px"
         defaultLanguage="python"
         value={content}
-        onChange={(value) => onChange(value || '')}
+        onChange={(value) => onChange(value || "")}
         options={{
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
           fontSize: 14,
-          lineNumbers: 'off',
+          lineNumbers: "off",
           folding: false,
           lineDecorationsWidth: 0,
           lineNumbersMinChars: 0,
-          renderLineHighlight: 'none',
+          renderLineHighlight: "none",
           padding: { top: 8, bottom: 8 },
-          theme: 'vs-dark'
+          theme: "vs-dark",
         }}
       />
     </div>

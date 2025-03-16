@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Upload, FileText, Database } from "lucide-react";
+import { Upload, Database } from "lucide-react";
 
 export function DataImporter({
   onImport,
