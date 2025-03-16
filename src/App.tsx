@@ -7,6 +7,7 @@ import { NotebookHeader } from "./components/NotebookHeader";
 import { UserPresence } from "./components/UserPresence";
 import { ThemeSwitcher } from "./components/ThemeSwitcher";
 import { NotebookProvider, useNotebook } from "./contexts/NotebookContext";
+import logo from "./assets/logo.png";
 import {
   initAuth,
   getAuthState,
@@ -41,11 +42,12 @@ function NotebookApp({ activeUsers }: { activeUsers: any[] }) {
           <div className="flex h-16 items-center justify-between px-4">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <Book className="h-8 w-8 text-white" />
+                <img src={logo} alt="DataCanvas Logo" className="h-8 w-8" />
                 <span className="ml-2 text-xl font-bold gradient-text">
                   DataCanvas
                 </span>
               </div>
+
               <div className="hidden md:flex md:items-center md:space-x-1 ml-8">
                 <a
                   href="#"
