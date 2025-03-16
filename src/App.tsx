@@ -36,7 +36,7 @@ function NotebookApp({ activeUsers }: { activeUsers: any[] }) {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-black dark:text-white">
       <nav className="border-b border-gray-800 sticky top-0 z-50 backdrop-blur-lg bg-black/50">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex h-16 items-center justify-between px-4">
